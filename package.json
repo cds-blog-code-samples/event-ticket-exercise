@@ -1,0 +1,31 @@
+{
+  "name": "event-ticket-exercise",
+  "version": "1.0.0",
+  "description": "This directory is a [truffle project](https://truffleframework.com/docs/truffle/overview) that contains the required contract, migration and test files. In this exercise you are going to implement the EventTickets.sol and EventTicketsV2.sol contracts.",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cds-blog-code-samples/event-ticket-exercise.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cds-blog-code-samples/event-ticket-exercise/issues"
+  },
+  "homepage": "https://github.com/cds-blog-code-samples/event-ticket-exercise#readme",
+  "devDependencies": {
+    "eslint": "^6.0.1",
+    "eslint-config-standard": "^13.0.1",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0"
+  }
+}
