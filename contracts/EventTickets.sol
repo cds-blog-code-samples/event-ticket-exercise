@@ -7,17 +7,17 @@ contract EventTickets {
     uint   TICKET_PRICE = 100 wei;
 
     struct Event {
-        string description;         // event description
-        string website;             // event website
-        uint totalTickets;          // total number of tickets available to purchase
-        uint sales;                 // total number of tickets sold
-        mapping (address => uint) buyers;       // mapping of buyers and their ticket purchase
-        bool isOpen;                // is the event opened for sale
+        string description;
+        string website;
+        uint unsoldTickets;
+        uint soldTickets;
+        mapping (address => uint) buyers;
+        bool isOpen;
     }
 
     Event myEvent;
 
-    event LogEventCreated (address owner, string description, string website, uint totalTickets);
+    event LogEventCreated (address owner, string description, string website, uint unsoldTickets);
     event LogBuyTickets (address purchaser, uint numTickets);
     event LogGetRefund (address purchaser, uint numTickets);
     event LogEndSale (address owner, uint balance);
@@ -46,7 +46,7 @@ contract EventTickets {
 
     modifier hasEnoughTickets(uint numTickets) {
         require (
-            myEvent.totalTickets >= numTickets,
+            myEvent.unsoldTickets >= numTickets,
             "Not enough tickets to sell"
         );
         _;
@@ -72,8 +72,8 @@ contract EventTickets {
         owner = msg.sender;
         myEvent.description = _description;
         myEvent.website = _website;
-        myEvent.totalTickets = _totalTickets;
-        myEvent.sales = 0;
+        myEvent.unsoldTickets = _totalTickets;
+        myEvent.soldTickets = 0;
         myEvent.isOpen = true;
         emit LogEventCreated(owner, _description, _website, _totalTickets);
     }
@@ -83,7 +83,7 @@ contract EventTickets {
         view
         returns(string memory description, string memory website, uint totalTickets, uint sales, bool isOpen)
     {
-        return (myEvent.description, myEvent.website, myEvent.totalTickets, myEvent.sales, myEvent.isOpen);
+        return (myEvent.description, myEvent.website, myEvent.unsoldTickets, myEvent.soldTickets, myEvent.isOpen);
     }
 
     function getBuyerTicketCount(address buyer)
@@ -103,8 +103,8 @@ contract EventTickets {
         refundExcessPayment(numTickets)
     {
         myEvent.buyers[msg.sender] += numTickets;
-        myEvent.totalTickets -= numTickets;
-        myEvent.sales += numTickets;
+        myEvent.unsoldTickets -= numTickets;
+        myEvent.soldTickets += numTickets;
 
         emit LogBuyTickets(msg.sender, numTickets);
     }
@@ -117,8 +117,8 @@ contract EventTickets {
     {
         uint numTickets = getBuyerTicketCount(msg.sender);
         myEvent.buyers[msg.sender] -= numTickets;
-        myEvent.totalTickets += numTickets;
-        myEvent.sales -= numTickets;
+        myEvent.unsoldTickets += numTickets;
+        myEvent.soldTickets -= numTickets;
 
         uint refundAmount = numTickets * TICKET_PRICE;
         (msg.sender).transfer(refundAmount);
@@ -132,7 +132,7 @@ contract EventTickets {
         isEventOpen()
     {
         myEvent.isOpen = false;
-        uint balance = myEvent.sales * TICKET_PRICE;
+        uint balance = myEvent.soldTickets * TICKET_PRICE;
         msg.sender.transfer(balance);
         emit LogEndSale(msg.sender, balance);
     }
