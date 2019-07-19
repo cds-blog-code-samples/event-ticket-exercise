@@ -3,11 +3,14 @@ pragma solidity ^0.5.0;
 import "truffle/Assert.sol";
 import "../contracts/EventTickets.sol";
 import "../contracts/ProxyActor.sol";
+import "../contracts/EventFactory.sol";
 
 
 contract TestEventTicket {
 
     uint public initialBalance = 1 ether;
+
+    EventFactory public eventFactory;
 
     EventTickets public theEvent;
     ProxyActor public fan;
@@ -20,13 +23,21 @@ contract TestEventTicket {
 
     function() external payable {}
 
+    function before()
+        public
+    {
+        eventFactory = new EventFactory();
+    }
+
     function beforeEach()
         public
     {
         theEvent = new EventTickets(_description, _url, _totalTickets);
-        fan = new ProxyActor(theEvent);
-        underFundedFan = new ProxyActor(theEvent);
-        hater = new ProxyActor(theEvent);
+        (,theEvent) = eventFactory.createEvent(_description, _url, _totalTickets);
+
+        fan = new ProxyActor(eventFactory, theEvent);
+        underFundedFan = new ProxyActor(eventFactory, theEvent);
+        hater = new ProxyActor(eventFactory, theEvent);
 
         address (fan).transfer(1000 wei);
     }

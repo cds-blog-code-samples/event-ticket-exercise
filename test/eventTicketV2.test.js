@@ -6,7 +6,6 @@ contract('EventTicketV2', function (accounts) {
   const deployAccount = accounts[0]
   const firstAccount = accounts[3]
   const secondAccount = accounts[4]
-  const thirdAccount = accounts[5]
 
   const ticketPrice = 100
 
@@ -16,18 +15,6 @@ contract('EventTicketV2', function (accounts) {
     description: 'event 1 description',
     website: 'URL 1',
     ticketsAvailable: 100
-  }
-
-  const event2 = {
-    description: 'event 2 description',
-    website: 'URL 2',
-    ticketsAvailable: 200
-  }
-
-  const event3 = {
-    description: 'event 3 description',
-    website: 'URL 3',
-    ticketsAvailable: 300
   }
 
   beforeEach(async () => {
@@ -158,7 +145,7 @@ contract('EventTicketV2', function (accounts) {
       it('only the owner should be able to end the sale and mark it as closed', async () => {
         await instance.addEvent(event1.description, event1.website, event1.ticketsAvailable, { from: deployAccount })
         await catchRevert(instance.endSale(0, { from: firstAccount }))
-        const txResult = await instance.endSale(0, { from: deployAccount })
+        await instance.endSale(0, { from: deployAccount })
         const eventData = await instance.readEvent(0)
 
         assert.equal(eventData['4'], false, 'The event isOpen variable should be marked false.')
